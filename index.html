@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>FBOOM Player & Downloader | Stream y descarga desde enlace</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Tarjeta principal */
+    .glass-card {
+      max-width: 1200px;
+      width: 100%;
+      background: rgba(18, 25, 45, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      padding: 2rem 1.8rem;
+      transition: all 0.2s ease;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #E0E7FF, #A78BFA);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1::before {
+      content: "🎬";
+      font-size: 1.9rem;
+      background: none;
+      -webkit-background-clip: unset;
+      color: #c084fc;
+    }
+
+    .sub {
+      color: #8e9bb5;
+      margin-top: 0.5rem;
+      margin-bottom: 1.6rem;
+      font-size: 0.9rem;
+      border-left: 3px solid #4f46e5;
+      padding-left: 0.8rem;
+    }
+
+    /* Input group */
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1.8rem;
+    }
+
+    .url-input {
+      flex: 4;
+      min-width: 220px;
+      background: #0f1422;
+      border: 1px solid #2a2f42;
+      border-radius: 1.5rem;
+      padding: 0.9rem 1.2rem;
+      font-size: 0.95rem;
+      color: #f0f3fa;
+      outline: none;
+      transition: all 0.2s;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .url-input:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(105deg, #4f46e5, #7c3aed);
+      border: none;
+      padding: 0 1.8rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: scale(0.97);
+      background: linear-gradient(105deg, #6366f1, #8b5cf6);
+      box-shadow: 0 6px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(45, 55, 85, 0.8);
+      border: 1px solid #3a4058;
+      padding: 0.7rem 1.3rem;
+      border-radius: 2rem;
+      color: #cdd9ff;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #2d374b;
+      border-color: #6c7aac;
+      color: white;
+    }
+
+    /* info y estado */
+    .status-area {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 1.4rem;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.8rem;
+      font-size: 0.85rem;
+      backdrop-filter: blur(4px);
+      border-left: 3px solid #4f46e5;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top: 2px solid #a78bfa;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .success-badge {
+      color: #a3e635;
+      background: rgba(163, 230, 53, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .error-text {
+      color: #f87171;
+    }
+
+    /* Reproductor multimedia */
+    .player-container {
+      background: #050a16;
+      border-radius: 1.8rem;
+      padding: 1.2rem;
+      margin: 1.5rem 0 1.2rem 0;
+      border: 1px solid #252e42;
+      box-shadow: 0 12px 20px -10px rgba(0,0,0,0.5);
+    }
+
+    video, audio {
+      width: 100%;
+      border-radius: 1.2rem;
+      outline: none;
+      background: #000000;
+      max-height: 460px;
+    }
+
+    video {
+      background: #0b0f18;
+    }
+
+    .file-preview {
+      text-align: center;
+      padding: 1rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .download-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+    }
+
+    .direct-link-box {
+      background: #0a0f1a;
+      border-radius: 1.2rem;
+      padding: 0.9rem 1rem;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #b9c7e0;
+      border: 1px solid #2d334a;
+      flex: 2;
+    }
+
+    .btn-download {
+      background: #10b981;
+      border: none;
+      padding: 0.7rem 1.3rem;
+      border-radius: 2rem;
+      font-weight: bold;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-download:hover {
+      background: #059669;
+      transform: scale(0.97);
+    }
+
+    hr {
+      border-color: #232a40;
+      margin: 1rem 0;
+    }
+
+    .footer-note {
+      font-size: 0.7rem;
+      text-align: center;
+      color: #4f5a77;
+      margin-top: 1.2rem;
+    }
+
+    @media (max-width: 640px) {
+      .glass-card {
+        padding: 1.5rem;
+      }
+      .btn-primary {
+        padding: 0 1.2rem;
+      }
+      .input-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="glass-card">
+  <h1>FBOOM Streamer</h1>
+  <div class="sub">▶️ Reproduce o descarga cualquier archivo desde fboom.me (vídeo, audio, etc.)</div>
+
+  <!-- Input URL -->
+  <div class="input-group">
+    <input type="text" id="fileUrlInput" class="url-input" 
+           placeholder="https://fboom.me/file/f1d20b6511d40  (o cualquier link de fboom)" 
+           value="https://fboom.me/file/f1d20b6511d40">
+    <button id="loadBtn" class="btn-primary">🔍 Cargar & Extraer</button>
+  </div>
+
+  <!-- Estado / logs -->
+  <div id="statusMessage" class="status-area">
+    <span>📎 Ingresa un enlace de fboom.me y haz clic en "Cargar". Se extraerá el enlace directo para reproducir y descargar.</span>
+  </div>
+
+  <!-- Reproductor multimedia (dinámico) -->
+  <div id="playerWrapper" style="display: none;">
+    <div class="player-container">
+      <div id="mediaPlayer"></div>
+    </div>
+  </div>
+
+  <!-- Zona de info y descarga directa -->
+  <div id="downloadSection" style="display: none;">
+    <div class="download-area">
+      <div class="direct-link-box" id="directLinkText">Enlace directo aparecerá aquí</div>
+      <button id="downloadBtn" class="btn-download">⬇️ Descargar archivo</button>
+    </div>
+    <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end;">
+      <button id="copyLinkBtn" class="btn-secondary">📋 Copiar enlace</button>
+      <button id="resetBtn" class="btn-secondary">🔄 Limpiar</button>
+    </div>
+  </div>
+  <hr />
+  <div class="footer-note">
+    ⚡ Nota: La extracción funciona mediante servidores proxy para evitar CORS. Si falla automático, vuelve a intentar o verifica que el enlace sea válido.
+    <br>🔊 Soporta vídeo (MP4, MKV, WEBM, MOV) y audio (MP3, OGG, WAV). Para otros formatos solo descarga.
+  </div>
+</div>
+
+<script>
+  // DOM elements
+  const urlInput = document.getElementById('fileUrlInput');
+  const loadBtn = document.getElementById('loadBtn');
+  const statusDiv = document.getElementById('statusMessage');
+  const playerWrapper = document.getElementById('playerWrapper');
+  const mediaPlayerDiv = document.getElementById('mediaPlayer');
+  const downloadSection = document.getElementById('downloadSection');
+  const directLinkTextSpan = document.getElementById('directLinkText');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const copyLinkBtn = document.getElementById('copyLinkBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  // Variables para manejar el enlace directo actual
+  let currentDirectUrl = '';
+  let currentFileName = 'fboom_file';
+
+  // --- funciones auxiliares ---
+  function setStatus(message, isError = false) {
+    statusDiv.innerHTML = isError ? `<span class="error-text">⚠️ ${message}</span>` : `<span>🔍 ${message}</span>`;
+  }
+
+  function showLoading(message = "Procesando enlace, obteniendo archivo...") {
+    statusDiv.innerHTML = `<div class="spinner"></div> ${message}`;
+  }
+
+  function resetPlayerAndDownload() {
+    playerWrapper.style.display = 'none';
+    downloadSection.style.display = 'none';
+    mediaPlayerDiv.innerHTML = '';
+    currentDirectUrl = '';
+    directLinkTextSpan.innerText = 'Enlace directo aparecerá aquí';
+  }
+
+  // Extraer ID del archivo (útil para feedback)
+  function extractFileIdFromUrl(fboomUrl) {
+    try {
+      const url = new URL(fboomUrl);
+      const pathParts = url.pathname.split('/');
+      const fileIndex = pathParts.indexOf('file');
+      if (fileIndex !== -1 && pathParts[fileIndex + 1]) {
+        return pathParts[fileIndex + 1];
+      }
+      // si no contiene /file/ tratamos de obtener ultimo segmento
+      return pathParts.pop() || 'archivo';
+    } catch(e) {
+      return 'desconocido';
+    }
+  }
+
+  // Función principal: obtener enlace directo desde fboom usando proxy CORS (allorigins)
+  async function fetchDirectLinkFromFboom(fboomUrl) {
+    // Usamos allorigins.win para obtener el HTML de la página sin CORS
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(fboomUrl)}`;
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error(`Fallo al conectar con el proxy (${response.status})`);
+    const data = await response.json();
+    if (!data.contents) throw new Error('No se pudo obtener el contenido de la página');
+    const html = data.contents;
+    
+    // 1) Usar DOMParser para analizar
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Estrategias para encontrar link directo de descarga/reproducción
+    let directLink = null;
+    
+    // Buscar cualquier enlace que contenga /d/ , /download/ o que tenga clases típicas de descarga
+    const allLinks = doc.querySelectorAll('a');
+    for (let link of allLinks) {
+      let href = link.getAttribute('href');
+      if (!href) continue;
+      const text = (link.innerText || '').toLowerCase();
+      // Detectar patrones
+      if (
+        href.includes('/d/') ||
+        href.includes('/download/') ||
+        href.includes('/get/') ||
+        text.includes('descargar') ||
+        text.includes('download') ||
+        text.includes('free download') ||
+        link.getAttribute('download') !== null
+      ) {
+        // convertir a absoluto
+        if (href.startsWith('/')) {
+          const urlObj = new URL(fboomUrl);
+          href = urlObj.origin + href;
+        } else if (!href.startsWith('http')) {
+          // enlaces relativos extraños
+          const urlObj = new URL(fboomUrl);
+          href = urlObj.origin + '/' + href;
+        }
+        // Verificar si se ve como un enlace real y no a la misma página
+        if (href !== fboomUrl && !href.includes('/file/')) {
+          directLink = href;
+          break;
+        }
+      }
+    }
+    
+    // Si no se encontró con el primer filtro, buscaremos elementos con clases populares
+    if (!directLink) {
+      const downloadSelectors = [
+        '.btn-download', '#download-btn', '.download-button', '.download-link',
+        'a[download]', '.free-download', '.direct-download'
+      ];
+      for (let selector of downloadSelectors) {
+        const elem = doc.querySelector(selector);
+        if (elem && elem.getAttribute('href')) {
+          let href = elem.getAttribute('href');
+          if (href.startsWith('/')) {
+            const urlObj = new URL(fboomUrl);
+            href = urlObj.origin + href;
+          }
+          directLink = href;
+          break;
+        }
+      }
+    }
+    
+    // extraer usando regex avanzada: buscar patrones de URL que apunten a archivos o /d/
+    if (!directLink) {
+      const regexPatterns = [
+        /(https?:\/\/[^\s"']+\/d\/[^\s"']+)/i,
+        /(https?:\/\/[^\s"']+\/download\/[^\s"']+)/i,
+        /(https?:\/\/\S+\.(mp4|mkv|webm|mov|avi|mp3|ogg|wav|m4a|flv|m3u8)(?:\?[^\s"']*)?)/i,
+        /"url"\s*:\s*"([^"]+\.(mp4|mp3|mkv|webm|mov|avi))"/i
+      ];
+      for (let regex of regexPatterns) {
+        const match = html.match(regex);
+        if (match && match[1]) {
+          directLink = match[1];
+          break;
+        }
+      }
+    }
+    
+    // limpiar parámetros no deseados? mantener igual
+    if (directLink) {
+      // Evitar enlaces tipo "javascript:void"
+      if (directLink.startsWith('javascript:')) directLink = null;
+      if (directLink && directLink.startsWith('http')) return directLink;
+    }
+    
+    // último intento: Si hay algún script que contenga variable downloadUrl
+    const scriptRegex = /(?:downloadUrl|file_url|direct_url)\s*=\s*["'](https?:\/\/[^"']+)["']/i;
+    const scriptMatch = html.match(scriptRegex);
+    if (scriptMatch && scriptMatch[1]) return scriptMatch[1];
+    
+    throw new Error('No se pudo extraer el enlace directo automáticamente. El archivo puede requerir verificación humana o el enlace no es compatible.');
+  }
+
+  // función para determinar si la URL parece multimedia y elegir reproductor
+  function isMediaUrl(url) {
+    const videoExt = /\.(mp4|mkv|webm|mov|avi|flv|m4v|mpg|mpeg|3gp)$/i;
+    const audioExt = /\.(mp3|wav|ogg|flac|aac|m4a|opus)$/i;
+    return { isVideo: videoExt.test(url), isAudio: audioExt.test(url) };
+  }
+
+  // Generar reproductor según tipo de archivo
+  function renderMediaPlayer(mediaUrl) {
+    const { isVideo, isAudio } = isMediaUrl(mediaUrl);
+    let playerHtml = '';
+    if (isVideo) {
+      playerHtml = `<video controls autoplay playsinline style="width:100%; max-height:460px;">
+                      <source src="${mediaUrl}" type="video/mp4">
+                      Tu navegador no soporta reproducción de video.
+                    </video>`;
+    } else if (isAudio) {
+      playerHtml = `<audio controls style="width:100%;">
+                      <source src="${mediaUrl}" type="audio/mpeg">
+                      Tu navegador no soporta audio.
+                    </audio>`;
+    } else {
+      // No es multimedia reconocida, mostrar mensaje más descarga
+      playerHtml = `<div class="file-preview">
+                      📁 Archivo no reconocido como video/audio. Puedes descargarlo directamente.
+                      <br><span style="font-size:0.8rem;">🔗 ${mediaUrl.substring(0, 80)}...</span>
+                    </div>`;
+    }
+    mediaPlayerDiv.innerHTML = playerHtml;
+    playerWrapper.style.display = 'block';
+    
+    // ajuste para mime-type específico: si es video pero falla, se intenta agregar tipo alternativo
+    if (isVideo && mediaUrl.match(/\.mkv$/i)) {
+      const videoEl = mediaPlayerDiv.querySelector('video');
+      if (videoEl) videoEl.setAttribute('type', 'video/x-matroska');
+    }
+  }
+
+  // Extraer nombre sugerido del enlace original
+  function suggestFileNameFromUrl(url, directUrl) {
+    try {
+      const urlObj = new URL(url);
+      const lastSegment = urlObj.pathname.split('/').pop();
+      if (lastSegment && lastSegment.length > 3) return lastSegment;
+    } catch(e) {}
+    if (directUrl) {
+      const parts = directUrl.split('/').pop().split('?')[0];
+      if (parts && parts.includes('.')) return parts;
+    }
+    return 'fboom_descarga';
+  }
+
+  // Función principal que maneja la extracción y renderizado final
+  async function processFboomLink(userLink) {
+    resetPlayerAndDownload();
+    if (!userLink || !userLink.trim()) {
+      setStatus('❌ Por favor ingresa un enlace válido de fboom.me', true);
+      return;
+    }
+    
+    // Validar formato del enlace
+    if (!userLink.includes('fboom.me') && !userLink.includes('fboom.co') && !userLink.includes('fboom')) {
+      setStatus('⚠️ El enlace debe ser de fboom.me (ej: https://fboom.me/file/...). Intenta de nuevo.', true);
+      return;
+    }
+    
+    let normalizedLink = userLink.trim();
+    if (!normalizedLink.startsWith('http')) normalizedLink = 'https://' + normalizedLink;
+    
+    showLoading("Extrayendo enlace directo desde fboom... (usando proxy)");
+    
+    try {
+      // Obtener la URL directa del archivo
+      const directUrl = await fetchDirectLinkFromFboom(normalizedLink);
+      if (!directUrl || !directUrl.startsWith('http')) throw new Error('El enlace obtenido no es válido');
+      
+      currentDirectUrl = directUrl;
+      const fileId = extractFileIdFromUrl(normalizedLink);
+      currentFileName = suggestFileNameFromUrl(normalizedLink, directUrl);
+      
+      // Mostrar información de éxito
+      setStatus(`✅ Enlace directo obtenido correctamente! ID: ${fileId}`);
+      
+      // Actualizar texto del enlace directo en UI
+      directLinkTextSpan.innerText = currentDirectUrl;
+      downloadSection.style.display = 'block';
+      
+      // Renderizar reproductor multimedia si aplica
+      renderMediaPlayer(currentDirectUrl);
+      
+      // Si el reproductor mostró preview no multimedia, igual mostramos zona descarga
+      // evento adicional: si es video/audio ya se muestra correctamente.
+      
+    } catch (error) {
+      console.error(error);
+      let errorMsg = error.message || 'Error desconocido al extraer enlace.';
+      if (errorMsg.includes('allorigins') || errorMsg.includes('fetch')) {
+        errorMsg = 'El proxy falló. Posiblemente el enlace expiró o el sitio requiere autenticación. Intenta más tarde o verifica el link.';
+      }
+      setStatus(`❌ Falló la extracción: ${errorMsg}`, true);
+      resetPlayerAndDownload();
+    }
+  }
+
+  // Función para forzar descarga del archivo (mediante enlace directo)
+  function downloadCurrentFile() {
+    if (!currentDirectUrl) {
+      setStatus('No hay enlace directo disponible para descargar', true);
+      return;
+    }
+    // Crear un enlace temporal y forzar click
+    const a = document.createElement('a');
+    a.href = currentDirectUrl;
+    a.download = currentFileName;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setStatus(`⬇️ Descarga iniciada: ${currentFileName}`, false);
+  }
+
+  function copyDirectLink() {
+    if (!currentDirectUrl) {
+      setStatus('No hay enlace para copiar todavía', true);
+      return;
+    }
+    navigator.clipboard.writeText(currentDirectUrl).then(() => {
+      setStatus('📋 Enlace directo copiado al portapapeles');
+    }).catch(() => {
+      setStatus('No se pudo copiar manualmente, selecciona el texto', true);
+    });
+  }
+  
+  function resetAll() {
+    resetPlayerAndDownload();
+    setStatus('🧹 Todo limpiado. Ingresa un nuevo enlace de fboom.');
+    urlInput.value = 'https://fboom.me/file/f1d20b6511d40';
+    currentDirectUrl = '';
+  }
+
+  // Eventos y carga inicial
+  loadBtn.addEventListener('click', () => {
+    const rawUrl = urlInput.value.trim();
+    if (!rawUrl) {
+      setStatus('✏️ Escribe un enlace de fboom.me primero', true);
+      return;
+    }
+    processFboomLink(rawUrl);
+  });
+  
+  downloadBtn.addEventListener('click', downloadCurrentFile);
+  copyLinkBtn.addEventListener('click', copyDirectLink);
+  resetBtn.addEventListener('click', resetAll);
+  
+  // Permitir "Enter" en el input
+  urlInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      loadBtn.click();
+    }
+  });
+  
+  // Mensaje inicial informativo sobre limitaciones
+  setTimeout(() => {
+    setStatus('💡 Introduce una URL de fboom (ej: https://fboom.me/file/...). Se obtendrá el enlace directo para ver online o guardar.');
+  }, 300);
+</script>
+</body>
+</html>
