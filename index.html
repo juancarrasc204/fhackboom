@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Asistente de búsqueda RARBG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador RARGB.TO</title>
     <style>
         * {
             margin: 0;
@@ -12,331 +12,217 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #0b1120 0%, #111827 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 1.5rem;
         }
 
-        .card {
-            max-width: 650px;
+        .container {
+            max-width: 550px;
             width: 100%;
-            background: rgba(18, 25, 45, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 30px 28px 40px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-            transition: all 0.2s ease;
+            background: rgba(17, 24, 39, 0.9);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            padding: 2rem 1.8rem 2.2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            transition: all 0.2s;
         }
 
         h1 {
             font-size: 1.9rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #F9F3E2, #D9C9A3);
-            background-clip: text;
+            background: linear-gradient(to right, #f5e6c4, #e6c27a);
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
             text-align: center;
             letter-spacing: -0.3px;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
         }
 
         .sub {
             text-align: center;
-            color: #8E9AB0;
-            margin-bottom: 32px;
-            font-size: 0.85rem;
-            border-bottom: 1px dashed #2A3448;
+            color: #9ca3af;
+            font-size: 0.8rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px dashed #374151;
             display: inline-block;
             width: auto;
             margin-left: auto;
             margin-right: auto;
-            padding-bottom: 8px;
+            padding-bottom: 0.6rem;
         }
 
-        .notice {
-            background: #1E293B;
-            border-left: 4px solid #F5B042;
-            border-radius: 20px;
-            padding: 14px 18px;
-            margin-bottom: 28px;
+        .info-card {
+            background: #1e293b;
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1.8rem;
             font-size: 0.8rem;
-            color: #CBD5E1;
+            color: #cbd5e6;
+            border-left: 4px solid #e6b450;
             display: flex;
             gap: 12px;
             align-items: center;
         }
 
-        .notice-icon {
-            font-size: 1.5rem;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        label {
+        .label {
             font-weight: 600;
-            color: #C7D1E8;
+            color: #e5e7eb;
+            margin-bottom: 8px;
+            margin-left: 6px;
             font-size: 0.85rem;
-            letter-spacing: 0.3px;
-            margin-left: 8px;
         }
 
         input {
-            background: #0F1422;
-            border: 1.5px solid #2A364F;
+            width: 100%;
+            background: #0f172a;
+            border: 1.5px solid #334155;
             padding: 14px 18px;
-            border-radius: 60px;
+            border-radius: 3rem;
             font-size: 1rem;
-            color: #F0F3FC;
+            color: #f1f5f9;
             outline: none;
             transition: 0.2s;
             font-family: monospace;
         }
 
         input:focus {
-            border-color: #E2B870;
-            box-shadow: 0 0 0 3px rgba(226, 184, 112, 0.2);
+            border-color: #e6b450;
+            box-shadow: 0 0 0 3px rgba(230, 180, 80, 0.2);
         }
 
-        .domain-row {
-            margin-bottom: 28px;
-        }
-
-        .domain-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-
-        .badge {
-            background: #2D3A5E;
+        .example {
+            text-align: right;
             font-size: 0.7rem;
-            padding: 4px 12px;
-            border-radius: 50px;
-            color: #B9C7E9;
+            color: #6b7280;
+            margin-top: 6px;
+            margin-right: 10px;
         }
 
-        .domain-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .domain-btn {
-            background: #111827;
-            border: 1px solid #2F3B5C;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.1s linear;
-            color: #BDC7E0;
-        }
-
-        .domain-btn.active {
-            background: #E2B870;
-            border-color: #E2B870;
-            color: #0B0F1A;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(226, 184, 112, 0.3);
-        }
-
-        .custom-domain {
-            margin-top: 16px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .custom-domain input {
-            flex: 2;
-            min-width: 160px;
-            font-size: 0.85rem;
-            padding: 10px 16px;
-        }
-
-        .btn-search {
+        button {
             width: 100%;
-            background: linear-gradient(95deg, #E2B870, #CDA351);
+            background: linear-gradient(95deg, #e6b450, #c9922e);
             border: none;
-            padding: 16px;
-            border-radius: 60px;
+            padding: 15px;
+            border-radius: 3rem;
             font-weight: 800;
-            font-size: 1.2rem;
-            color: #0A0E1A;
+            font-size: 1.1rem;
+            color: #0f0f17;
             cursor: pointer;
-            transition: 0.2s;
-            margin-top: 10px;
+            transition: 0.15s;
+            margin-top: 1.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+            gap: 10px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
         }
 
-        .btn-search:hover {
-            background: linear-gradient(95deg, #F5CD8A, #D9B15E);
+        button:hover {
+            background: linear-gradient(95deg, #f3c26b, #d9a341);
             transform: scale(0.98);
         }
 
-        .footer-note {
-            margin-top: 30px;
-            font-size: 0.7rem;
+        .url-preview {
+            margin-top: 1.5rem;
+            background: #0a0f1a;
+            padding: 12px 16px;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            word-break: break-all;
             text-align: center;
-            color: #5B6B8F;
+            color: #7c8aa5;
+            font-family: monospace;
+            border: 1px solid #2a3448;
         }
 
-        .legal {
-            background: #0B0F19;
-            border-radius: 30px;
-            padding: 12px;
-            font-size: 0.7rem;
+        .footer {
+            margin-top: 1.5rem;
             text-align: center;
-            margin-top: 20px;
-            color: #7786A5;
+            font-size: 0.65rem;
+            color: #4b5563;
+        }
+
+        .badge {
+            background: #2d3a5e;
+            border-radius: 30px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            display: inline-block;
+            color: #e2e8f0;
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>🎬 RARBG mirror assistant</h1>
+<div class="container">
+    <h1>🎬 RARGB.TO · Buscador directo</h1>
     <div style="text-align: center;">
-        <div class="sub">generador de enlace de búsqueda</div>
+        <div class="sub">formato exacto: rargb.to/search/?search=</div>
     </div>
 
-    <div class="notice">
-        <div class="notice-icon">⚖️</div>
-        <div>Esta herramienta <strong>no descarga ni aloja contenido</strong>. Solo construye la URL de búsqueda en el mirror que elijas. Verifica la legalidad en tu país y los derechos de autor.</div>
+    <div class="info-card">
+        <span>🔍</span>
+        <span>Introduce el nombre de la actriz o palabra clave. Se abrirá <strong>rargb.to</strong> en nueva pestaña con el resultado.</span>
     </div>
 
-    <div class="input-group">
-        <label>🔍 Nombre de la actriz / palabras clave</label>
-        <input type="text" id="searchInput" placeholder="Ej: Valentina Jewels" value="Valentina Jewels">
-    </div>
+    <div class="label">🎭 Nombre / actriz / palabras</div>
+    <input type="text" id="searchQuery" placeholder="Ejemplo: Valentina Jewels" value="Valentina Jewels">
+    <div class="example">💡 sugerencia: "Valentina Jewels", "Valentina Jewels Team Skeet" o "Kyle Mason"</div>
 
-    <div class="domain-row">
-        <div class="domain-title">
-            <span>🌐 Mirror RARBG (activo)</span>
-            <span class="badge">selecciona uno</span>
-        </div>
-        <div class="domain-buttons" id="domainButtons">
-            <button data-domain="rarbgproxy.to" class="domain-btn active">rarbgproxy.to</button>
-            <button data-domain="rarbggo.to" class="domain-btn">rarbggo.to</button>
-            <button data-domain="rarbg.is" class="domain-btn">rarbg.is</button>
-            <button data-domain="rarbgprx.org" class="domain-btn">rarbgprx.org</button>
-        </div>
-        <div class="custom-domain">
-            <input type="text" id="customDomain" placeholder="o escribe dominio personalizado: ejemplo.com" autocomplete="off">
-            <button id="setCustomBtn" style="background:#2a3448; border:none; border-radius:40px; padding:8px 16px; color:white; cursor:pointer;">Usar</button>
-        </div>
-    </div>
-
-    <button class="btn-search" id="searchBtn">
-        🔎 Abrir búsqueda en nueva pestaña
+    <button id="searchButton">
+        🌐 Buscar en RARGB.TO 
         <span>↗️</span>
     </button>
 
-    <div class="footer-note">
-        🧩 La URL generada será: <strong>https://[mirror]/search.php?q=TU_TEXTO&category=xxx</strong>
+    <div class="url-preview" id="urlPreview">
+        https://rargb.to/search/?search=Valentina%20Jewels
     </div>
-    <div class="legal">
-        Uso ético: este asistente solo facilita la navegación. Respeta los derechos de autor. El contenido de los mirrors es responsabilidad de terceros.
+    <div class="footer">
+        ⚖️ Solo genera el enlace de búsqueda. No aloja ni descarga contenido. Verifica la legalidad en tu país.
     </div>
 </div>
 
 <script>
-    // Estado del dominio actual
-    let currentDomain = "rarbgproxy.to";
+    const searchInput = document.getElementById('searchQuery');
+    const searchBtn = document.getElementById('searchButton');
+    const previewSpan = document.getElementById('urlPreview');
 
-    // Elementos
-    const searchInput = document.getElementById('searchInput');
-    const domainBtns = document.querySelectorAll('.domain-btn');
-    const customDomainInput = document.getElementById('customDomain');
-    const setCustomBtn = document.getElementById('setCustomBtn');
-    const searchBtn = document.getElementById('searchBtn');
-
-    // Función para actualizar estilo visual de botones
-    function setActiveDomain(domain) {
-        currentDomain = domain;
-        domainBtns.forEach(btn => {
-            if (btn.getAttribute('data-domain') === domain) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-        // Si se selecciona uno predefinido, limpiamos el custom input para no confundir
-        customDomainInput.value = '';
+    // Función para actualizar la vista previa de la URL
+    function updatePreview() {
+        let rawQuery = searchInput.value.trim();
+        if (rawQuery === "") {
+            previewSpan.textContent = "https://rargb.to/search/?search=";
+            return;
+        }
+        // Codificar para URL (espacios -> %20, etc)
+        let encoded = encodeURIComponent(rawQuery);
+        let fullUrl = `https://rargb.to/search/?search=${encoded}`;
+        previewSpan.textContent = fullUrl;
     }
 
-    // Event listeners para botones predefinidos
-    domainBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const domain = btn.getAttribute('data-domain');
-            setActiveDomain(domain);
-        });
-    });
-
-    // Evento para usar dominio personalizado
-    setCustomBtn.addEventListener('click', () => {
-        let custom = customDomainInput.value.trim();
-        if (custom === "") {
-            alert("Escribe un dominio válido (ejemplo: rarbg.something.org sin https://)");
-            return;
-        }
-        // limpiar http:// o https:// por si acaso
-        custom = custom.replace(/^https?:\/\//i, '');
-        if (custom.endsWith('/')) custom = custom.slice(0, -1);
-        if (custom.length < 4) {
-            alert("Dominio demasiado corto");
-            return;
-        }
-        currentDomain = custom;
-        // desactivar visualmente los botones predefinidos
-        domainBtns.forEach(btn => btn.classList.remove('active'));
-        customDomainInput.value = custom;
-        // Mostrar feedback opcional
-    });
-
-    // Función principal de búsqueda
+    // Función para abrir la búsqueda en nueva pestaña
     function performSearch() {
-        let query = searchInput.value.trim();
-        if (query === "") {
-            alert("Por favor, escribe al menos un nombre o palabra clave (ej: Valentina Jewels)");
+        let rawQuery = searchInput.value.trim();
+        if (rawQuery === "") {
+            alert("Por favor, escribe el nombre de la actriz o palabra clave (ej: Valentina Jewels)");
             return;
         }
 
-        let domain = currentDomain;
-        if (!domain) {
-            alert("No hay dominio seleccionado, elige uno de los botones o escribe un mirror personalizado.");
-            return;
-        }
-
-        // Construir URL estilo RARBG (la mayoría de mirrors usan /search.php?q=...)
-        // Nota: algunos mirrors pueden usar /torrents.php?search= , pero el más común es search.php?q=
-        // Para máxima compatibilidad usamos search.php?q=
-        let searchUrl = `https://${domain}/search.php?q=${encodeURIComponent(query)}&category=xxx`;
-
+        let encoded = encodeURIComponent(rawQuery);
+        let searchUrl = `https://rargb.to/search/?search=${encoded}`;
+        
         // Abrir en nueva pestaña
         window.open(searchUrl, '_blank');
     }
 
-    // Botón principal
+    // Eventos
+    searchInput.addEventListener('input', updatePreview);
     searchBtn.addEventListener('click', performSearch);
-
-    // Además, presionando Enter en el input también lanza búsqueda
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -344,11 +230,8 @@
         }
     });
 
-    // Pequeña mejora: si escribes en custom y haces click en buscar sin pulsar "usar"
-    // toma el último dominio activo. El usuario debe pulsar "usar" para activar custom.
-    // Para evitar confusiones, el custom se actualiza solo con el botón Usar.
-    // Si alguien quiere usar rapidamente un dominio personalizado, puede escribirlo y dar a "usar"
-    // y luego buscar.
+    // Inicializar vista previa
+    updatePreview();
 </script>
 </body>
 </html>
