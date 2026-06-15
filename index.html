@@ -1,573 +1,354 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>FBOOM Downloader & Player | Extracción mejorada</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Asistente de búsqueda RARBG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background: radial-gradient(circle at 10% 20%, #0b1120, #030617);
-      min-height: 100vh;
-      padding: 2rem 1.2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        body {
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    .card {
-      max-width: 1300px;
-      width: 100%;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(16px);
-      border-radius: 2rem;
-      border: 1px solid rgba(71, 85, 105, 0.4);
-      padding: 1.8rem;
-      box-shadow: 0 25px 45px -12px black;
-    }
+        .card {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(18, 25, 45, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 30px 28px 40px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
 
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: linear-gradient(120deg, #c084fc, #60a5fa);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-    }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F9F3E2, #D9C9A3);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+        }
 
-    .sub {
-      color: #94a3b8;
-      margin: 0.5rem 0 1.5rem 0;
-      border-left: 3px solid #3b82f6;
-      padding-left: 1rem;
-    }
+        .sub {
+            text-align: center;
+            color: #8E9AB0;
+            margin-bottom: 32px;
+            font-size: 0.85rem;
+            border-bottom: 1px dashed #2A3448;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 8px;
+        }
 
-    .input-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 1.5rem;
-    }
+        .notice {
+            background: #1E293B;
+            border-left: 4px solid #F5B042;
+            border-radius: 20px;
+            padding: 14px 18px;
+            margin-bottom: 28px;
+            font-size: 0.8rem;
+            color: #CBD5E1;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
 
-    .url-field {
-      flex: 5;
-      background: #0f172ad9;
-      border: 1px solid #334155;
-      border-radius: 2rem;
-      padding: 0.9rem 1.2rem;
-      color: #e2e8f0;
-      font-size: 0.9rem;
-      outline: none;
-      transition: 0.2s;
-    }
+        .notice-icon {
+            font-size: 1.5rem;
+        }
 
-    .url-field:focus {
-      border-color: #8b5cf6;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-    }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
 
-    button {
-      background: #3b82f6;
-      border: none;
-      border-radius: 2rem;
-      padding: 0 1.5rem;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-      transition: 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-    }
+        label {
+            font-weight: 600;
+            color: #C7D1E8;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            margin-left: 8px;
+        }
 
-    button:hover {
-      transform: scale(0.97);
-      filter: brightness(1.05);
-    }
+        input {
+            background: #0F1422;
+            border: 1.5px solid #2A364F;
+            padding: 14px 18px;
+            border-radius: 60px;
+            font-size: 1rem;
+            color: #F0F3FC;
+            outline: none;
+            transition: 0.2s;
+            font-family: monospace;
+        }
 
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #475569;
-      color: #cbd5e1;
-    }
+        input:focus {
+            border-color: #E2B870;
+            box-shadow: 0 0 0 3px rgba(226, 184, 112, 0.2);
+        }
 
-    .btn-outline:hover {
-      background: #1e293b;
-      border-color: #818cf8;
-    }
+        .domain-row {
+            margin-bottom: 28px;
+        }
 
-    .status-area {
-      background: #0f172a80;
-      border-radius: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.85rem;
-      font-family: monospace;
-      border-left: 3px solid #3b82f6;
-      word-break: break-word;
-    }
+        .domain-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
 
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-top: 2px solid #a78bfa;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
+        .badge {
+            background: #2D3A5E;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+            color: #B9C7E9;
+        }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+        .domain-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
 
-    .player-box {
-      background: #020617;
-      border-radius: 1.5rem;
-      margin: 1.2rem 0;
-      padding: 0.8rem;
-      border: 1px solid #2d3a5e;
-    }
+        .domain-btn {
+            background: #111827;
+            border: 1px solid #2F3B5C;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s linear;
+            color: #BDC7E0;
+        }
 
-    video, audio {
-      width: 100%;
-      border-radius: 1rem;
-      max-height: 500px;
-      background: black;
-    }
+        .domain-btn.active {
+            background: #E2B870;
+            border-color: #E2B870;
+            color: #0B0F1A;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(226, 184, 112, 0.3);
+        }
 
-    .download-panel {
-      background: #0f172a70;
-      border-radius: 1.2rem;
-      padding: 1rem;
-      margin-top: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
+        .custom-domain {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-    .direct-link {
-      background: #00000066;
-      padding: 0.6rem 1rem;
-      border-radius: 1rem;
-      font-size: 0.7rem;
-      word-break: break-all;
-      font-family: monospace;
-      flex: 3;
-      color: #94a3b8;
-    }
+        .custom-domain input {
+            flex: 2;
+            min-width: 160px;
+            font-size: 0.85rem;
+            padding: 10px 16px;
+        }
 
-    .btn-download {
-      background: #10b981;
-    }
+        .btn-search {
+            width: 100%;
+            background: linear-gradient(95deg, #E2B870, #CDA351);
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #0A0E1A;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+        }
 
-    .flex-btns {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+        .btn-search:hover {
+            background: linear-gradient(95deg, #F5CD8A, #D9B15E);
+            transform: scale(0.98);
+        }
 
-    hr {
-      border-color: #1e293b;
-      margin: 1rem 0;
-    }
+        .footer-note {
+            margin-top: 30px;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #5B6B8F;
+        }
 
-    .warning {
-      color: #facc15;
-      background: #42200630;
-      padding: 8px 12px;
-      border-radius: 1rem;
-      font-size: 0.75rem;
-    }
-
-    @media (max-width: 640px) {
-      .card { padding: 1.2rem; }
-      button { padding: 0 1rem; }
-    }
-  </style>
+        .legal {
+            background: #0B0F19;
+            border-radius: 30px;
+            padding: 12px;
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #7786A5;
+        }
+    </style>
 </head>
 <body>
 <div class="card">
-  <h1>🎥 FBOOM · Stream & Download</h1>
-  <div class="sub">Introduce un enlace de fboom.me/file/xxxx → obtendremos el enlace real para ver online o guardar.</div>
-
-  <div class="input-group">
-    <input type="text" id="fboomUrl" class="url-field" 
-           placeholder="https://fboom.me/file/f1d20b6511d40" 
-           value="https://fboom.me/file/f1d20b6511d40">
-    <button id="extractBtn">🔍 Extraer enlace</button>
-    <button id="resetAllBtn" class="btn-outline">🗑 Limpiar</button>
-  </div>
-
-  <div id="statusMsg" class="status-area">
-    📌 Listo. Pega un link de fboom y pulsa "Extraer enlace".
-  </div>
-
-  <!-- Reproductor -->
-  <div id="playerContainer" style="display: none;"></div>
-
-  <!-- Zona descarga e info -->
-  <div id="downloadZone" style="display: none;">
-    <div class="download-panel">
-      <div class="direct-link" id="directLinkDisplay">Enlace directo aparecerá aquí</div>
-      <div class="flex-btns">
-        <button id="downloadFileBtn" class="btn-download">⬇️ Descargar</button>
-        <button id="copyDirectBtn" class="btn-outline">📋 Copiar enlace</button>
-      </div>
+    <h1>🎬 RARBG mirror assistant</h1>
+    <div style="text-align: center;">
+        <div class="sub">generador de enlace de búsqueda</div>
     </div>
-    <div class="warning" id="fallbackWarning" style="display: none;">
-      ⚠️ No se pudo extraer automáticamente. Puedes abrir el enlace original abajo y descargar manualmente.
-      <button id="openOriginalBtn" style="background:#475569; margin-left: 10px; padding: 4px 12px;">Abrir fboom original</button>
-    </div>
-  </div>
 
-  <hr />
-  <div class="warning" style="background:#0f172a; text-align:center;">
-    🔧 Mejoras: múltiples proxies (allorigins, corsproxy.io) + análisis profundo del HTML. Si falla, te damos el enlace original para que descargues tú mismo.
-  </div>
+    <div class="notice">
+        <div class="notice-icon">⚖️</div>
+        <div>Esta herramienta <strong>no descarga ni aloja contenido</strong>. Solo construye la URL de búsqueda en el mirror que elijas. Verifica la legalidad en tu país y los derechos de autor.</div>
+    </div>
+
+    <div class="input-group">
+        <label>🔍 Nombre de la actriz / palabras clave</label>
+        <input type="text" id="searchInput" placeholder="Ej: Valentina Jewels" value="Valentina Jewels">
+    </div>
+
+    <div class="domain-row">
+        <div class="domain-title">
+            <span>🌐 Mirror RARBG (activo)</span>
+            <span class="badge">selecciona uno</span>
+        </div>
+        <div class="domain-buttons" id="domainButtons">
+            <button data-domain="rarbgproxy.to" class="domain-btn active">rarbgproxy.to</button>
+            <button data-domain="rarbggo.to" class="domain-btn">rarbggo.to</button>
+            <button data-domain="rarbg.is" class="domain-btn">rarbg.is</button>
+            <button data-domain="rarbgprx.org" class="domain-btn">rarbgprx.org</button>
+        </div>
+        <div class="custom-domain">
+            <input type="text" id="customDomain" placeholder="o escribe dominio personalizado: ejemplo.com" autocomplete="off">
+            <button id="setCustomBtn" style="background:#2a3448; border:none; border-radius:40px; padding:8px 16px; color:white; cursor:pointer;">Usar</button>
+        </div>
+    </div>
+
+    <button class="btn-search" id="searchBtn">
+        🔎 Abrir búsqueda en nueva pestaña
+        <span>↗️</span>
+    </button>
+
+    <div class="footer-note">
+        🧩 La URL generada será: <strong>https://[mirror]/search.php?q=TU_TEXTO&category=xxx</strong>
+    </div>
+    <div class="legal">
+        Uso ético: este asistente solo facilita la navegación. Respeta los derechos de autor. El contenido de los mirrors es responsabilidad de terceros.
+    </div>
 </div>
 
 <script>
-  // Elementos
-  const urlInput = document.getElementById('fboomUrl');
-  const extractBtn = document.getElementById('extractBtn');
-  const resetBtn = document.getElementById('resetAllBtn');
-  const statusDiv = document.getElementById('statusMsg');
-  const playerContainer = document.getElementById('playerContainer');
-  const downloadZone = document.getElementById('downloadZone');
-  const directLinkSpan = document.getElementById('directLinkDisplay');
-  const downloadFileBtn = document.getElementById('downloadFileBtn');
-  const copyDirectBtn = document.getElementById('copyDirectBtn');
-  const fallbackWarning = document.getElementById('fallbackWarning');
-  const openOriginalBtn = document.getElementById('openOriginalBtn');
+    // Estado del dominio actual
+    let currentDomain = "rarbgproxy.to";
 
-  // Variables globales
-  let currentDirectUrl = '';
-  let currentOriginalUrl = '';
-  let suggestedFileName = 'fboom_archivo';
+    // Elementos
+    const searchInput = document.getElementById('searchInput');
+    const domainBtns = document.querySelectorAll('.domain-btn');
+    const customDomainInput = document.getElementById('customDomain');
+    const setCustomBtn = document.getElementById('setCustomBtn');
+    const searchBtn = document.getElementById('searchBtn');
 
-  // --- helpers ---
-  function setStatus(text, isError = false, isSuccess = false) {
-    statusDiv.innerHTML = isError ? `❌ ${text}` : (isSuccess ? `✅ ${text}` : `🔍 ${text}`);
-    if (isError) statusDiv.style.borderLeftColor = '#ef4444';
-    else if (isSuccess) statusDiv.style.borderLeftColor = '#10b981';
-    else statusDiv.style.borderLeftColor = '#3b82f6';
-  }
-
-  function showLoading(msg = "Procesando...") {
-    statusDiv.innerHTML = `<div class="spinner"></div> ${msg}`;
-    statusDiv.style.borderLeftColor = '#a78bfa';
-  }
-
-  function resetUI() {
-    playerContainer.style.display = 'none';
-    playerContainer.innerHTML = '';
-    downloadZone.style.display = 'none';
-    fallbackWarning.style.display = 'none';
-    currentDirectUrl = '';
-    directLinkSpan.innerText = 'Enlace directo aparecerá aquí';
-  }
-
-  // Extraer nombre sugerido
-  function extractFileName(url, originalFboom) {
-    try {
-      let raw = url.split('/').pop().split('?')[0];
-      if (raw && raw.includes('.')) return raw;
-      let fboomPart = originalFboom.split('/').pop();
-      if (fboomPart && fboomPart.length > 5) return fboomPart + '.file';
-      return 'fboom_media';
-    } catch(e) { return 'descarga_fboom'; }
-  }
-
-  // Determinar si es multimedia
-  function isPlayable(url) {
-    const video = /\.(mp4|mkv|webm|mov|avi|flv|m4v|mpg|mpeg)(\?|$)/i;
-    const audio = /\.(mp3|wav|ogg|flac|aac|m4a|opus)(\?|$)/i;
-    return { video: video.test(url), audio: audio.test(url) };
-  }
-
-  // Renderizar reproductor
-  function renderPlayer(mediaUrl) {
-    const { video, audio } = isPlayable(mediaUrl);
-    let html = '';
-    if (video) {
-      html = `<video controls autoplay playsinline style="width:100%; max-height:480px; background:#000;">
-                <source src="${mediaUrl}" type="video/mp4">
-                <p>No se puede reproducir, pero puedes descargar.</p>
-              </video>`;
-    } else if (audio) {
-      html = `<audio controls style="width:100%;">
-                <source src="${mediaUrl}" type="audio/mpeg">
-              </audio>`;
-    } else {
-      html = `<div style="padding: 1.5rem; text-align:center; background:#0f172a; border-radius:1rem;">
-                📁 El archivo no es vídeo/audio reconocido. Solo disponible para descarga.
-                <br><span style="font-size:0.7rem;">${mediaUrl.substring(0, 70)}...</span>
-              </div>`;
+    // Función para actualizar estilo visual de botones
+    function setActiveDomain(domain) {
+        currentDomain = domain;
+        domainBtns.forEach(btn => {
+            if (btn.getAttribute('data-domain') === domain) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        // Si se selecciona uno predefinido, limpiamos el custom input para no confundir
+        customDomainInput.value = '';
     }
-    playerContainer.innerHTML = `<div class="player-box">${html}</div>`;
-    playerContainer.style.display = 'block';
-    
-    // force mkv hint
-    if (video && mediaUrl.match(/\.mkv/i)) {
-      const videoEl = playerContainer.querySelector('video');
-      if (videoEl) videoEl.setAttribute('type', 'video/x-matroska');
-    }
-  }
 
-  // Función para extraer usando múltiples proxies y estrategias
-  async function fetchDirectWithFallback(fboomUrl) {
-    // Lista de proxies (allorigins es estable, corsproxy.io como backup)
-    const proxies = [
-      { name: 'allorigins', url: `https://api.allorigins.win/get?url=${encodeURIComponent(fboomUrl)}` },
-      { name: 'corsproxy', url: `https://corsproxy.io/?${encodeURIComponent(fboomUrl)}` }
-    ];
-    
-    let htmlContent = null;
-    let lastError = null;
-    
-    for (let proxy of proxies) {
-      try {
-        const res = await fetch(proxy.url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        if (proxy.name === 'allorigins') {
-          const json = await res.json();
-          if (json && json.contents) htmlContent = json.contents;
-          else throw new Error('formato inválido');
-        } else {
-          htmlContent = await res.text();
+    // Event listeners para botones predefinidos
+    domainBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const domain = btn.getAttribute('data-domain');
+            setActiveDomain(domain);
+        });
+    });
+
+    // Evento para usar dominio personalizado
+    setCustomBtn.addEventListener('click', () => {
+        let custom = customDomainInput.value.trim();
+        if (custom === "") {
+            alert("Escribe un dominio válido (ejemplo: rarbg.something.org sin https://)");
+            return;
         }
-        if (htmlContent && htmlContent.length > 500) break; // éxito
-      } catch (err) {
-        lastError = err;
-        continue;
-      }
-    }
-    
-    if (!htmlContent) throw new Error(`No se pudo obtener la página con ningún proxy: ${lastError?.message}`);
-    
-    // Parsear el DOM
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlContent, 'text/html');
-    
-    // Estrategia 1: Enlaces directos con patrones comunes de fboom
-    let directUrl = null;
-    
-    // Buscar enlaces que tengan href y contengan /d/ o /download/ o /get/
-    const allAnchors = doc.querySelectorAll('a[href]');
-    for (let a of allAnchors) {
-      let href = a.getAttribute('href');
-      if (!href) continue;
-      const text = (a.innerText || '').toLowerCase();
-      if (href.includes('/d/') || href.includes('/download/') || href.includes('/get/') || 
-          text.includes('descargar') || text.includes('download') || a.hasAttribute('download')) {
-        // convertir a absoluto
-        if (href.startsWith('/')) {
-          const origin = new URL(fboomUrl).origin;
-          href = origin + href;
-        } else if (!href.startsWith('http')) {
-          const base = new URL(fboomUrl).origin;
-          href = base + '/' + href;
+        // limpiar http:// o https:// por si acaso
+        custom = custom.replace(/^https?:\/\//i, '');
+        if (custom.endsWith('/')) custom = custom.slice(0, -1);
+        if (custom.length < 4) {
+            alert("Dominio demasiado corto");
+            return;
         }
-        if (href !== fboomUrl && !href.includes('/file/')) {
-          directUrl = href;
-          break;
+        currentDomain = custom;
+        // desactivar visualmente los botones predefinidos
+        domainBtns.forEach(btn => btn.classList.remove('active'));
+        customDomainInput.value = custom;
+        // Mostrar feedback opcional
+    });
+
+    // Función principal de búsqueda
+    function performSearch() {
+        let query = searchInput.value.trim();
+        if (query === "") {
+            alert("Por favor, escribe al menos un nombre o palabra clave (ej: Valentina Jewels)");
+            return;
         }
-      }
-    }
-    
-    // Estrategia 2: Botones con clases específicas (btn-download, download-button, etc)
-    if (!directUrl) {
-      const downloadBtns = doc.querySelectorAll('.btn-download, .download-btn, .download-link, a.download, button.download');
-      for (let btn of downloadBtns) {
-        let href = btn.getAttribute('href') || btn.getAttribute('data-url') || btn.getAttribute('data-link');
-        if (href) {
-          if (href.startsWith('/')) {
-            const origin = new URL(fboomUrl).origin;
-            href = origin + href;
-          }
-          if (href.startsWith('http')) {
-            directUrl = href;
-            break;
-          }
+
+        let domain = currentDomain;
+        if (!domain) {
+            alert("No hay dominio seleccionado, elige uno de los botones o escribe un mirror personalizado.");
+            return;
         }
-      }
+
+        // Construir URL estilo RARBG (la mayoría de mirrors usan /search.php?q=...)
+        // Nota: algunos mirrors pueden usar /torrents.php?search= , pero el más común es search.php?q=
+        // Para máxima compatibilidad usamos search.php?q=
+        let searchUrl = `https://${domain}/search.php?q=${encodeURIComponent(query)}&category=xxx`;
+
+        // Abrir en nueva pestaña
+        window.open(searchUrl, '_blank');
     }
-    
-    // Estrategia 3: Buscar en scripts variables con patrones
-    if (!directUrl) {
-      const scriptRegexes = [
-        /(?:downloadUrl|fileUrl|direct_link|file_url|download_link)\s*[:=]\s*["'](https?:\/\/[^"'\s]+)["']/i,
-        /window\.location\s*=\s*["'](https?:\/\/[^"'\s]+)["']/i,
-        /href\s*:\s*["'](https?:\/\/[^"'\s]+\/d\/[^"'\s]+)["']/i,
-        /"url"\s*:\s*"([^"]+\.(mp4|mkv|webm|mp3|avi|mov|flv))"/i
-      ];
-      for (let regex of scriptRegexes) {
-        const match = htmlContent.match(regex);
-        if (match && match[1]) {
-          directUrl = match[1];
-          break;
+
+    // Botón principal
+    searchBtn.addEventListener('click', performSearch);
+
+    // Además, presionando Enter en el input también lanza búsqueda
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch();
         }
-      }
-    }
-    
-    // Estrategia 4: meta refresh o redirección
-    if (!directUrl) {
-      const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
-      if (metaRefresh && metaRefresh.getAttribute('content')) {
-        const content = metaRefresh.getAttribute('content');
-        const urlMatch = content.match(/url=(.+)/i);
-        if (urlMatch && urlMatch[1]) {
-          let redir = urlMatch[1];
-          if (redir.startsWith('/')) redir = new URL(fboomUrl).origin + redir;
-          if (redir.startsWith('http')) directUrl = redir;
-        }
-      }
-    }
-    
-    // Estrategia 5: dentro de iframes (algunos fboom incrustan player)
-    if (!directUrl) {
-      const iframes = doc.querySelectorAll('iframe');
-      for (let iframe of iframes) {
-        let src = iframe.getAttribute('src');
-        if (src && (src.includes('.mp4') || src.includes('video') || src.includes('/stream'))) {
-          if (src.startsWith('/')) src = new URL(fboomUrl).origin + src;
-          if (src.startsWith('http')) { directUrl = src; break; }
-        }
-      }
-    }
-    
-    // Si encontramos URL, limpiar parámetros extraños
-    if (directUrl && directUrl.includes(' ')) directUrl = directUrl.split(' ')[0];
-    if (directUrl && directUrl.startsWith('http')) return directUrl;
-    
-    throw new Error('No se pudo localizar el enlace real de descarga. El archivo puede estar protegido o requerir login.');
-  }
-  
-  // Proceso principal
-  async function processFboom() {
-    let rawUrl = urlInput.value.trim();
-    if (!rawUrl) {
-      setStatus('Debes ingresar una URL de fboom.me', true);
-      return;
-    }
-    if (!rawUrl.includes('fboom.me') && !rawUrl.includes('fboom.co')) {
-      setStatus('El enlace no parece ser de fboom.me (ej: https://fboom.me/file/...)', true);
-      return;
-    }
-    if (!rawUrl.startsWith('http')) rawUrl = 'https://' + rawUrl;
-    currentOriginalUrl = rawUrl;
-    
-    resetUI();
-    showLoading(`Analizando ${rawUrl} ... usando proxy múltiple`);
-    
-    try {
-      const directLink = await fetchDirectWithFallback(rawUrl);
-      if (!directLink) throw new Error('No se obtuvo enlace');
-      
-      currentDirectUrl = directLink;
-      suggestedFileName = extractFileName(directLink, rawUrl);
-      
-      // Mostrar zona de descarga
-      directLinkSpan.innerText = currentDirectUrl;
-      downloadZone.style.display = 'block';
-      fallbackWarning.style.display = 'none';
-      setStatus('Enlace real extraído correctamente', false, true);
-      
-      // Intentar reproducir si es audio/video
-      const { video, audio } = isPlayable(currentDirectUrl);
-      if (video || audio) {
-        renderPlayer(currentDirectUrl);
-      } else {
-        // Mostrar un mensaje de que solo descarga
-        playerContainer.style.display = 'block';
-        playerContainer.innerHTML = `<div class="player-box" style="text-align:center; padding:1rem;">
-          🎞️ Formato no reproducible en línea (${currentDirectUrl.split('.').pop() || 'desconocido'}). Puedes descargar usando el botón.
-        </div>`;
-      }
-      
-    } catch (err) {
-      console.error(err);
-      setStatus(`Error: ${err.message}`, true);
-      // Mostrar fallback: permitir al usuario abrir el enlace original manualmente
-      downloadZone.style.display = 'block';
-      fallbackWarning.style.display = 'block';
-      directLinkSpan.innerText = `No se pudo extraer automáticamente. Abre el enlace original: ${rawUrl}`;
-      currentDirectUrl = ''; // no tenemos directo
-      // Limpiar reproductor
-      playerContainer.style.display = 'none';
-      playerContainer.innerHTML = '';
-      
-      // Configurar botón para abrir original
-      openOriginalBtn.onclick = () => {
-        window.open(rawUrl, '_blank');
-      };
-    }
-  }
-  
-  // Descargar archivo
-  function downloadCurrent() {
-    if (!currentDirectUrl) {
-      setStatus('No hay enlace directo disponible. Prueba a extraer de nuevo o usa el enlace original.', true);
-      return;
-    }
-    const a = document.createElement('a');
-    a.href = currentDirectUrl;
-    a.download = suggestedFileName;
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setStatus(`Descargando: ${suggestedFileName}`, false, true);
-  }
-  
-  function copyLink() {
-    if (!currentDirectUrl) {
-      setStatus('No hay enlace directo para copiar', true);
-      return;
-    }
-    navigator.clipboard.writeText(currentDirectUrl)
-      .then(() => setStatus('Enlace directo copiado', false, true))
-      .catch(() => setStatus('No se pudo copiar', true));
-  }
-  
-  function resetAll() {
-    resetUI();
-    setStatus('Todo limpiado. Ingresa un enlace de fboom y prueba de nuevo.');
-    urlInput.value = 'https://fboom.me/file/f1d20b6511d40';
-    currentDirectUrl = '';
-    currentOriginalUrl = '';
-    fallbackWarning.style.display = 'none';
-    downloadZone.style.display = 'none';
-  }
-  
-  // Event listeners
-  extractBtn.addEventListener('click', processFboom);
-  resetBtn.addEventListener('click', resetAll);
-  downloadFileBtn.addEventListener('click', downloadCurrent);
-  copyDirectBtn.addEventListener('click', copyLink);
-  
-  // Enter en input
-  urlInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') processFboom();
-  });
-  
-  // Ejemplo de mensaje inicial
-  setTimeout(() => {
-    setStatus('✨ Listo para extraer enlaces de fboom. Si el enlace es de vídeo/audio, se mostrará reproductor.', false);
-  }, 200);
+    });
+
+    // Pequeña mejora: si escribes en custom y haces click en buscar sin pulsar "usar"
+    // toma el último dominio activo. El usuario debe pulsar "usar" para activar custom.
+    // Para evitar confusiones, el custom se actualiza solo con el botón Usar.
+    // Si alguien quiere usar rapidamente un dominio personalizado, puede escribirlo y dar a "usar"
+    // y luego buscar.
 </script>
 </body>
 </html>
